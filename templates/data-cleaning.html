@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Automated Data Cleaning with Python - Niwamanya Douglas{% endblock %}
+
+{% block content %}
+<section id="project">
+  <h2>Automated Data Cleaning with Python</h2>
+  <img src="{{ url_for('static', filename='images/data-cleaning.jpg') }}" alt="Data Cleaning Project" class="project-image">
+  <p>
+    This project demonstrates my ability to automate repetitive data cleaning tasks using Python. The script performs the following tasks:
+  </p>
+  <ul>
+    <li>Standardizes column names (converts to lowercase, replaces spaces with underscores).</li>
+    <li>Removes duplicate rows.</li>
+    <li>Fills missing numeric values with the mean.</li>
+    <li>Drops columns with excessive missing values (threshold: 50%).</li>
+    <li>Exports the cleaned dataset to a CSV file.</li>
+  </ul>
+  <p>
+    By automating these tasks, the script reduces manual effort by approximately 50%, making it a valuable tool for data analysts and researchers.
+  </p>
+  <h3>Tools Used</h3>
+  <ul>
+    <li>Python</li>
+    <li>Pandas Library</li>
+  </ul>
+  <h3>Source Code</h3>
+  <p>
+    You can view the source code and learn more about this project on my GitHub repository:
+    <a href="https://github.com/yourusername/python-data-cleaning" target="_blank" class="btn">View on GitHub</a>
+  </p>
+</section>
+{% endblock %}

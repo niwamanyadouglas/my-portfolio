@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Niwamanya Douglas - Data Enthusiast | Python Developer{% endblock %}
+
+{% block content %}
+<section id="home" class="hero text-center py-5">
+  <div class="container">
+    <img src="{{ url_for('static', filename='images/hero-bg.jpg') }}" alt="Niwamanya Douglas" class="profile-pic mb-4">
+    <h1 class="display-4 fw-bold">Niwamanya Douglas</h1>
+    <p class="lead">Data Enthusiast | Python Developer | Excel & Google Sheets Expert | Research Specialist</p>
+    <a href="{{ url_for('portfolio') }}" class="btn btn-primary btn-lg me-2">View My Projects</a>
+    <a href="{{ url_for('resume') }}" class="btn btn-outline-light btn-lg">Download Resume</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}About Me - Niwamanya Douglas{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-dark text-white text-center">
+    <div class="container" data-aos="fade-down">
+        <h1 class="display-4 fw-bold">Who is Niwamanya Douglas?</h1>
+        <p class="lead">Data Analyst | Python Developer | Problem Solver</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-5 mb-4 mb-md-0 text-center" data-aos="fade-right">
+                <div class="p-2 border rounded shadow-sm bg-white">
+                    <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Niwamanya Douglas" class="img-fluid rounded">
+                </div>
+            </div>
+
+            <div class="col-md-7" data-aos="fade-left">
+                <h2 class="fw-bold mb-3">Turning Data into Action</h2>
+                <p class="text-muted">
+                    I am a highly motivated <strong>Data Enthusiast and Backend Developer</strong> with a passion for automation. 
+                    I specialize in taking complex, messy datasets and transforming them into clear, actionable insights using Python.
+                </p>
+                <p class="text-muted">
+                    My journey started with a fascination for how information moves. Today, I build tools that bridge the gap between 
+                    raw data and business decisions. Whether it's developing Flask-based web applications or writing 
+                    automated cleaning scripts in Pandas, my goal is always the same: <strong>Efficiency.</strong>
+                </p>
+
+                <div class="mt-4">
+                    <h5 class="fw-bold">Core Tech Stack:</h5>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <span class="badge bg-primary px-3 py-2">Python (Flask)</span>
+                        <span class="badge bg-primary px-3 py-2">Pandas & NumPy</span>
+                        <span class="badge bg-primary px-3 py-2">Data Cleaning</span>
+                        <span class="badge bg-primary px-3 py-2">HTML5/CSS3</span>
+                        <span class="badge bg-primary px-3 py-2">JavaScript (ES6)</span>
+                        <span class="badge bg-primary px-3 py-2">Excel & Pivot Tables</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-5" data-aos="fade-up">Why Work With Me?</h2>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+                <div class="card h-100 border-0 shadow-sm p-4">
+                    <i class="fas fa-magic fa-3x text-primary mb-3"></i>
+                    <h4>Automation First</h4>
+                    <p class="text-muted">I don't just do the work; I build tools that do the work better and faster.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+                <div class="card h-100 border-0 shadow-sm p-4">
+                    <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                    <h4>Data-Driven</h4>
+                    <p class="text-muted">Every decision I make is backed by rigorous analysis and clean data practices.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+                <div class="card h-100 border-0 shadow-sm p-4">
+                    <i class="fas fa-user-check fa-3x text-primary mb-3"></i>
+                    <h4>Reliability</h4>
+                    <p class="text-muted">I value clear communication and delivering projects that exceed expectations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
