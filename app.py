@@ -7,7 +7,8 @@ from werkzeug.utils import secure_filename
 import pandas as pd
 
 # 1. Load Environment Variables from .env file
-load_dotenv(override=True) # Add override=True here
+if os.path.exists('.env'):
+    load_dotenv(override=True)
 
 app = Flask(__name__)
 
@@ -17,12 +18,13 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 ALLOWED_EXTENSIONS = {'csv'}
 
 # Email Configuration
+# Updated Email Configuration for Render Compatibility
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
+app.config['MAIL_PORT'] = 2525         # Port 587 is often blocked; 2525 is a common alternative
 app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = os.getenv('EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.getenv('EMAIL_PASS')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('EMAIL_USER')
 
 # Initialize Mail and Ensure Uploads Directory exists
 mail = Mail(app)
