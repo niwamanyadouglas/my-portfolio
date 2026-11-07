@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
@@ -10,17 +11,19 @@ import pandas as pd
 if os.path.exists('.env'):
     load_dotenv(override=True)
 
+# Initialize Flask App (Fixed: changed 'name' to '__name__')
 app = Flask(__name__)
 
 # 2. Configuration
-app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET')
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET', 'default-secret-key')
 app.config['UPLOAD_FOLDER'] = 'uploads'
-ALLOWED_EXTENSIONS = {'csv'}
+
+# Updated: Support CSV and Excel files
+ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'xls'}
 
 # Email Configuration
-# Updated Email Configuration for Render Compatibility
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 2525         # Port 587 is often blocked; 2525 is a common alternative
+app.config['MAIL_PORT'] = 2525
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = os.getenv('EMAIL_USER')
@@ -52,7 +55,6 @@ def about():
 
 @app.route('/portfolio')
 def portfolio():
-    """Render Portfolio with Demo links enabled where applicable."""
     projects = [
         {
             "title": "Automated Data Cleaning with Python",
@@ -91,7 +93,7 @@ def sales_analysis_project():
 def research_project():
     return render_template('research-project.html')
 
-# 5. LIVE DEMO: Data Cleaning Tool
+# 5. LIVE DEMO: Data Cleaning Tool (FIXED ORDER)
 @app.route('/projects/data-cleaning/demo', methods=['GET', 'POST'])
 def data_cleaning_demo():
     if request.method == 'POST':
@@ -100,43 +102,60 @@ def data_cleaning_demo():
             return redirect(request.url)
         
         file = request.files['file']
+        
         if file.filename == '':
             flash("No file selected.", "danger")
             return redirect(request.url)
-            
+        
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            # Generate unique filename with UUID to prevent overwriting
+            original_filename = secure_filename(file.filename)
+            file_extension = original_filename.rsplit('.', 1)[1].lower()
+            unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
+            
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
             file.save(filepath)
-
+            
             try:
-                # pandas cleaning logic
-                df = pd.read_csv(filepath)
+                # Read file based on extension
+                if file_extension == 'csv':
+                    df = pd.read_csv(filepath)
+                else:  # Excel files
+                    df = pd.read_excel(filepath, engine='openpyxl')
                 
-                # Standardize columns: lowercase and underscores
+                # --- FIXED CLEANING ORDER ---
+                
+                # 1. Standardize columns: lowercase and underscores
                 df.columns = df.columns.str.lower().str.replace(" ", "_").str.replace("-", "_")
                 
-                # Remove duplicates
+                # 2. Remove duplicates
                 df = df.drop_duplicates()
                 
-                # Fill missing numeric values with the mean
+                # 3. Drop columns that are mostly empty (more than 50% null) FIRST
+                df = df.dropna(axis=1, thresh=len(df)*0.5)
+                
+                # 4. Fill missing numeric values with the mean AFTER dropping sparse columns
                 numeric_cols = df.select_dtypes(include=['number']).columns
                 df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
                 
-                # Drop columns that are mostly empty (more than 50% null)
-                df = df.dropna(axis=1, thresh=len(df)*0.5)
-                
-                cleaned_filename = 'cleaned_' + filename
+                # ----------------------------
+
+                # Save cleaned file with unique name
+                cleaned_filename = f"cleaned_{uuid.uuid4().hex}.{file_extension}"
                 cleaned_filepath = os.path.join(app.config['UPLOAD_FOLDER'], cleaned_filename)
-                df.to_csv(cleaned_filepath, index=False)
+                
+                if file_extension == 'csv':
+                    df.to_csv(cleaned_filepath, index=False)
+                else:
+                    df.to_excel(cleaned_filepath, index=False, engine='openpyxl')
                 
                 flash("Cleaning complete! Download your file below.", "success")
                 return redirect(url_for('data_cleaning_demo', filename=cleaned_filename))
             
             except Exception as e:
-                flash(f"Error processing CSV: {str(e)}", "danger")
+                flash(f"Error processing file: {str(e)}", "danger")
                 return redirect(request.url)
-                
+    
     return render_template('data-cleaning-demo.html')
 
 @app.route('/downloads/<filename>')
@@ -150,11 +169,11 @@ def contact():
         name = request.form.get('name')
         email = request.form.get('email')
         message = request.form.get('message')
-
+        
         if not name or not email or not message:
             flash("Please fill out all fields.", "warning")
             return redirect(url_for('contact'))
-
+        
         try:
             msg = Message(
                 subject=f"Portfolio Contact: {name}",
@@ -167,8 +186,8 @@ def contact():
             print(f"Mail Error: {e}")
             flash("Email service failed. Please try again later.", "danger")
         
-        return redirect(url_for('home'))
-
+        return redirect(url_for('contact'))
+    
     return render_template('contact.html')
 
 @app.route('/resume')
