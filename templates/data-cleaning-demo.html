@@ -3,93 +3,89 @@
 {% block title %}Live Demo - Automated Data Cleaning{% endblock %}
 
 {% block content %}
-<section class="demo-section">
-    <h2>🚀 Live Demo: Automated Data Cleaning</h2>
-    <p class="lead">
-        Upload a raw CSV or Excel file to automatically remove duplicates, handle missing values, 
-        and standardize column names.
-    </p>
+<div class="container py-5">
+    <div class="text-center mb-5" data-aos="fade-up">
+        <h1 class="display-5 fw-bold">🚀 Live Demo: Automated Data Cleaning</h1>
+        <p class="lead text-muted">Upload a raw CSV or Excel file to automatically remove duplicates, handle missing values, and standardize column names.</p>
+    </div>
     
     <!-- Upload Form -->
-    <div class="upload-container">
-        <form method="POST" enctype="multipart/form-data" class="upload-form">
-            <div class="form-group">
-                <label for="file" class="form-label">Select File</label>
-                <input type="file" 
-                       name="file" 
-                       id="file" 
-                       class="form-control" 
-                       accept=".csv,.xlsx,.xls"
-                       required>
-                <small class="form-text">
-                    Supported formats: CSV, Excel (.xlsx, .xls) | Max size: 10MB
-                </small>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg">
-                Clean Data
-            </button>
-        </form>
+    <div class="card shadow-sm mb-5" data-aos="fade-up">
+        <div class="card-body p-4">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label fw-bold">Select File</label>
+                    <input type="file" name="file" id="file" class="form-control form-control-lg" accept=".csv,.xlsx,.xls" required>
+                    <div class="form-text">Supported formats: CSV, Excel (.xlsx, .xls) | Max size: 10MB</div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="fas fa-magic me-2"></i> Clean Data
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- Results Dashboard (Only shows after a file is uploaded) -->
     {% if filename %}
-    <div class="results-container">
-        <div class="alert alert-success">
-            <h4>✅ Cleaning Complete!</h4>
-            <p>Your dataset <strong>({{ original_name }})</strong> has been successfully processed.</p>
+    <div class="card shadow-sm border-success mb-4" data-aos="fade-up">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0"><i class="fas fa-check-circle me-2"></i> Cleaning Complete!</h4>
         </div>
+        <div class="card-body">
+            <p class="mb-4">Your dataset <strong>({{ original_name }})</strong> has been successfully processed.</p>
 
-        {% if stats and quality_score %}
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h5>📊 Dataset Size</h5>
-                <p class="stat-value">{{ stats.total_rows }} rows × {{ stats.total_columns }} cols</p>
+            {% if stats and quality_score %}
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="card text-center h-100 bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-2">📊 Dataset Size</h6>
+                            <h4 class="fw-bold text-primary mb-0">{{ stats.total_rows }} × {{ stats.total_columns }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card text-center h-100 bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-2">🎯 Quality Score</h6>
+                            <h4 class="fw-bold text-success mb-0">{{ quality_score }}/100</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card text-center h-100 bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-2">🔄 Duplicates Removed</h6>
+                            <h4 class="fw-bold text-warning mb-0">{{ duplicates_removed }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card text-center h-100 bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-2">⚠️ Missing Values Filled</h6>
+                            <h4 class="fw-bold text-info mb-0">{{ missing_values_filled }}</h4>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="stat-card">
-                <h5>🎯 Quality Score</h5>
-                <p class="stat-value">{{ quality_score }}/100</p>
-            </div>
-            <div class="stat-card">
-                <h5>🔄 Duplicates Removed</h5>
-                <p class="stat-value">{{ duplicates_removed }}</p>
-            </div>
-            <div class="stat-card">
-                <h5>⚠️ Missing Values Filled</h5>
-                <p class="stat-value">{{ missing_values_filled }}</p>
-            </div>
-        </div>
-        {% endif %}
+            {% endif %}
 
-        {% if report %}
-        <div class="report-section">
-            <h5>📋 Cleaning Report</h5>
-            <pre class="report-text">{{ report }}</pre>
-        </div>
-        {% endif %}
+            {% if report %}
+            <div class="mb-4">
+                <h5 class="fw-bold mb-3">📋 Cleaning Report</h5>
+                <pre class="bg-dark text-light p-3 rounded font-monospace" style="font-size: 0.9rem;">{{ report }}</pre>
+            </div>
+            {% endif %}
 
-        <div class="download-section">
-            <h5>📥 Download Your Files</h5>
-            <a href="{{ url_for('download_cleaned_file', filename=filename) }}" 
-               class="btn btn-success btn-lg">
-                Download Cleaned {{ file_extension | upper }}
-            </a>
+            <div class="text-center mt-4">
+                <h5 class="fw-bold mb-3">📥 Download Your Files</h5>
+                <a href="{{ url_for('download_cleaned_file', filename=filename) }}" class="btn btn-success btn-lg px-5">
+                    <i class="fas fa-download me-2"></i> Download Cleaned {{ file_extension | upper }}
+                </a>
+            </div>
         </div>
     </div>
     {% endif %}
-</section>
-
-<!-- Embedded Styles for the Demo Page -->
-<style>
-    .demo-section { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
-    .upload-container { background: #f8f9fa; padding: 2rem; border-radius: 10px; margin: 2rem 0; }
-    .form-control { padding: 0.75rem; border: 2px solid #dee2e6; border-radius: 5px; width: 100%; box-sizing: border-box; }
-    .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: 600; text-decoration: none; display: inline-block; }
-    .btn-primary { background: #007bff; color: white; }
-    .btn-success { background: #28a745; color: white; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0; }
-    .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; border: 1px solid #e9ecef; }
-    .stat-value { font-size: 1.5rem; font-weight: bold; color: #007bff; margin: 0.5rem 0; }
-    .report-text { background: #2d2d2d; color: #f8f8f2; padding: 1rem; border-radius: 5px; font-family: monospace; white-space: pre-wrap; }
-    .alert-success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 1.5rem; border-radius: 8px; }
-</style>
+</div>
 {% endblock %}
