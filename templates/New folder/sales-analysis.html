@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Sales Data Analysis - Niwamanya Douglas{% endblock %}
+
+{% block content %}
+<section id="project" class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">Sales Data Analysis</h2>
+
+    <!-- Project Overview -->
+    <div class="row align-items-center mb-5">
+      <div class="col-md-6" data-aos="fade-right">
+        <img src="{{ url_for('static', filename='images/sales-analysis.jpg') }}" alt="Sales Data Analysis" class="img-fluid rounded shadow">
+      </div>
+      <div class="col-md-6" data-aos="fade-left">
+        <h3>Project Overview</h3>
+        <p>
+          In this project, I analyzed sales data to identify trends, optimize pricing strategies, and recommend actionable insights for boosting revenue. Using tools like Excel and Python, I processed large datasets, created visualizations, and provided clear recommendations.
+        </p>
+        <ul>
+          <li><strong>Tools Used:</strong> Excel, Python (Pandas, Matplotlib)</li>
+          <li><strong>Key Deliverables:</strong> Pivot tables, charts, and actionable insights</li>
+          <li><strong>Impact:</strong> Improved pricing strategies and identified untapped revenue opportunities</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Key Features -->
+    <div class="row mb-5">
+      <div class="col-md-12 text-center">
+        <h3>Key Features of the Analysis</h3>
+        <div class="row mt-4">
+          <div class="col-md-4" data-aos="zoom-in">
+            <div class="card h-100">
+              <div class="card-body">
+                <h4 class="card-title">Trend Analysis</h4>
+                <p class="card-text">Identified seasonal trends and patterns in sales data to optimize inventory management.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4" data-aos="zoom-in">
+            <div class="card h-100">
+              <div class="card-body">
+                <h4 class="card-title">Pricing Optimization</h4>
+                <p class="card-text">Recommended pricing adjustments based on competitor analysis and customer behavior.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4" data-aos="zoom-in">
+            <div class="card h-100">
+              <div class="card-body">
+                <h4 class="card-title">Revenue Forecasting</h4>
+                <p class="card-text">Built predictive models to forecast future revenue and plan strategic initiatives.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tools and Technologies -->
+    <div class="row mb-5">
+      <div class="col-md-12 text-center">
+        <h3>Tools and Technologies</h3>
+        <div class="mt-4">
+          <span class="badge bg-primary me-2">Excel</span>
+          <span class="badge bg-primary me-2">Python</span>
+          <span class="badge bg-primary me-2">Pandas</span>
+          <span class="badge bg-primary me-2">Matplotlib</span>
+          <span class="badge bg-primary me-2">Data Visualization</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Source Code -->
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h3>Source Code</h3>
+        <p>
+          You can view the source code and learn more about this project on my GitHub repository:
+          <a href="https://github.com/yourusername/sales-data-analysis" target="_blank" class="btn btn-primary">View on GitHub</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

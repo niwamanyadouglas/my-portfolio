@@ -1,49 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Niwamanya Douglas{% endblock %}</title>
-    <!-- Link to your existing CSS file -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
+{% extends 'base.html' %}
 
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <a href="{{ url_for('home') }}" class="logo">Niwamanya Douglas</a>
-        <ul class="nav-links">
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('about') }}">About Me</a></li>
-            <li><a href="{{ url_for('portfolio') }}">Portfolio</a></li>
-            <li><a href="{{ url_for('resume') }}">Resume</a></li>
-            <li><a href="{{ url_for('contact') }}">Contact</a></li>
-        </ul>
-    </nav>
+{% block title %}About Me - Niwamanya Douglas{% endblock %}
 
-    <!-- Main Content Area -->
-    <main class="container">
-        <!-- Flash Messages (Success/Error alerts) -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+{% block content %}
+<section id="about" class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h2 class="text-center fw-bold mb-4" data-aos="fade-down">About Me</h2>
 
-        <!-- Page Specific Content -->
-        {% block content %}{% endblock %}
-    </main>
+        <div data-aos="fade-up">
+          <p class="lead">
+            I'm Niwamanya Douglas, a data enthusiast and Python developer who enjoys turning
+            messy, repetitive data work into clean, reliable results.
+          </p>
+          <p>
+            I work with Python (Pandas, Matplotlib), Excel and Google Sheets to clean, analyze
+            and present data, and I carry out research that turns findings into clear,
+            practical recommendations.
+          </p>
+        </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; {{ now.year }} Niwamanya Douglas. All rights reserved.</p>
-    </footer>
+        <h3 class="mt-5 mb-4 text-center">What I Do</h3>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          <div class="col" data-aos="zoom-in">
+            <div class="card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fab fa-python fa-2x mb-3 text-primary"></i>
+                <h5 class="card-title">Python &amp; Automation</h5>
+                <p class="card-text text-muted">Scripts and small tools that automate data cleaning and preparation.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col" data-aos="zoom-in" data-aos-delay="100">
+            <div class="card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fas fa-table fa-2x mb-3 text-primary"></i>
+                <h5 class="card-title">Excel &amp; Google Sheets</h5>
+                <p class="card-text text-muted">Pivot tables, charts and analysis that make sales and operational data easy to act on.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col" data-aos="zoom-in" data-aos-delay="200">
+            <div class="card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fas fa-search fa-2x mb-3 text-primary"></i>
+                <h5 class="card-title">Research</h5>
+                <p class="card-text text-muted">Gathering, synthesizing and reporting evidence from surveys, interviews and secondary sources.</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-</body>
-</html>
+        <div class="text-center mt-5" data-aos="fade-up">
+          <a href="{{ url_for('portfolio') }}" class="btn btn-primary btn-lg me-2">See My Projects</a>
+          <a href="{{ url_for('contact') }}" class="btn btn-outline-primary btn-lg">Get In Touch</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

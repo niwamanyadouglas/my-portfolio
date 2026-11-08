@@ -29,6 +29,12 @@
               <textarea name="message" id="message" rows="5" class="form-control" placeholder="How can I help you?" required></textarea>
             </div>
 
+            <!-- Honeypot field: hidden from real visitors, filled in by spam bots -->
+            <div style="position:absolute; left:-9999px;" aria-hidden="true">
+              <label for="website">Leave this field empty</label>
+              <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+            </div>
+
             <div class="d-grid">
               <button type="submit" class="btn btn-primary btn-lg shadow-sm">
                 <i class="fas fa-paper-plane me-2"></i> Send Message
@@ -37,13 +43,16 @@
           </form>
         </div>
 
+        {% if linkedin_url or github_url or contact_email %}
         <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="400">
           <p class="text-muted mb-2">Or reach out via</p>
           <div class="d-flex justify-content-center gap-3">
-            <a href="#" class="text-dark"><i class="fab fa-linkedin fa-2x"></i></a>
-            <a href="#" class="text-dark"><i class="fab fa-github fa-2x"></i></a>
+            {% if linkedin_url %}<a href="{{ linkedin_url }}" target="_blank" rel="noopener" class="text-dark" aria-label="LinkedIn"><i class="fab fa-linkedin fa-2x"></i></a>{% endif %}
+            {% if github_url %}<a href="{{ github_url }}" target="_blank" rel="noopener" class="text-dark" aria-label="GitHub"><i class="fab fa-github fa-2x"></i></a>{% endif %}
+            {% if contact_email %}<a href="mailto:{{ contact_email }}" class="text-dark" aria-label="Email"><i class="fas fa-envelope fa-2x"></i></a>{% endif %}
           </div>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>

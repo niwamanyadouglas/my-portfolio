@@ -73,15 +73,17 @@
     </div>
 
     <!-- Source Code -->
+    {% if github_url %}
     <div class="row">
       <div class="col-md-12 text-center">
         <h3>Source Code</h3>
         <p>
-          You can view the source code and learn more about this project on my GitHub repository:
-          <a href="https://github.com/yourusername/sales-data-analysis" target="_blank" class="btn btn-primary">View on GitHub</a>
+          You can view the source code and learn more about this project on my GitHub profile:
+          <a href="{{ github_url }}" target="_blank" rel="noopener" class="btn btn-primary">View on GitHub</a>
         </p>
       </div>
     </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

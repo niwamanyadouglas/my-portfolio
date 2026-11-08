@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Live Demo - Automated Data Cleaning{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5" data-aos="fade-up">
+        <h1 class="display-5 fw-bold">🚀 Live Demo: Automated Data Cleaning</h1>
+        <p class="lead text-muted">Upload a raw CSV or Excel file to automatically remove duplicates, handle missing values, and standardize column names.</p>
+    </div>
+    
+    <!-- Upload Form -->
+    <div class="card shadow-sm mb-5" data-aos="fade-up">
+        <div class="card-body p-4">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label fw-bold">Select File</label>
+                    <input type="file" name="file" id="file" class="form-control form-control-lg" accept=".csv,.xlsx,.xls" required>
+                    <div class="form-text">Supported formats: CSV, Excel (.xlsx, .xls) | Max size: 10MB</div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="fas fa-magic me-2"></i> Clean Data
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Dashboard (Only shows after a file is uploaded) -->
+    {% if filename %}
+    <div class="card shadow-sm border-success mb-4" data-aos="fade-up">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0"><i class="fas fa-check-circle me-2"></i> Cleaning Complete!</h4>
+        </div>
+        <div class="card-body">
+            <p class="mb-4">Your dataset <strong>({{ original_name }})</strong> has been successfully processed.</p>
+
+            {% if stats and quality_score %}
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="card text-center h-100 bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-2">📊 Dataset Size</h6>
+                            <h4 class="fw-bold text-primary mb-0">{{ stats.total_rows }} × {{ stats.total_columns }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card text-center h-100 bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-2">🎯 Quality Score</h6>
+                            <h4 class="fw-bold text-success mb-0">{{ quality_score }}/100</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card text-center h-100 bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-2">🔄 Duplicates Removed</h6>
+                            <h4 class="fw-bold text-warning mb-0">{{ duplicates_removed }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card text-center h-100 bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-2">⚠️ Missing Values Filled</h6>
+                            <h4 class="fw-bold text-info mb-0">{{ missing_values_filled }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if report %}
+            <div class="mb-4">
+                <h5 class="fw-bold mb-3">📋 Cleaning Report</h5>
+                <pre class="bg-dark text-light p-3 rounded font-monospace" style="font-size: 0.9rem;">{{ report }}</pre>
+            </div>
+            {% endif %}
+
+            <div class="text-center mt-4">
+                <h5 class="fw-bold mb-3">📥 Download Your Files</h5>
+                <a href="{{ url_for('download_cleaned_file', filename=filename) }}" class="btn btn-success btn-lg px-5">
+                    <i class="fas fa-download me-2"></i> Download Cleaned {{ file_extension | upper }}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

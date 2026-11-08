@@ -14,7 +14,7 @@
     <li>Removes duplicate rows.</li>
     <li>Fills missing numeric values with the mean.</li>
     <li>Drops columns with excessive missing values (threshold: 50%).</li>
-    <li>Exports the cleaned dataset to a CSV file.</li>
+    <li>Exports the cleaned dataset in the same format (CSV or Excel).</li>
   </ul>
   <p>
     By automating these tasks, the script reduces manual effort by approximately 50%, making it a valuable tool for data analysts and researchers.
@@ -24,10 +24,15 @@
     <li>Python</li>
     <li>Pandas Library</li>
   </ul>
+  <p>
+    <a href="{{ url_for('data_cleaning_demo') }}" class="btn">Try the Live Demo</a>
+  </p>
+  {% if github_url %}
   <h3>Source Code</h3>
   <p>
-    You can view the source code and learn more about this project on my GitHub repository:
-    <a href="https://github.com/yourusername/python-data-cleaning" target="_blank" class="btn">View on GitHub</a>
+    You can view the source code and learn more about this project on my GitHub profile:
+    <a href="{{ github_url }}" target="_blank" rel="noopener" class="btn">View on GitHub</a>
   </p>
+  {% endif %}
 </section>
 {% endblock %}
