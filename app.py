@@ -11,7 +11,7 @@ import pandas as pd
 if os.path.exists('.env'):
     load_dotenv(override=True)
 
-# Initialize Flask App (Fixed: changed 'name' to '__name__')
+# Initialize Flask App (FIXED: changed 'name' to '__name__')
 app = Flask(__name__)
 
 # 2. Configuration
@@ -21,7 +21,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 # Updated: Support CSV and Excel files
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'xls'}
 
-# Email Configuration
+# Email Configuration (Port 2525 is used for Render compatibility)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 2525
 app.config['MAIL_USE_TLS'] = True
@@ -93,7 +93,7 @@ def sales_analysis_project():
 def research_project():
     return render_template('research-project.html')
 
-# 5. LIVE DEMO: Data Cleaning Tool (FIXED ORDER)
+# 5. LIVE DEMO: Data Cleaning Tool (IMPROVED LOGIC)
 @app.route('/projects/data-cleaning/demo', methods=['GET', 'POST'])
 def data_cleaning_demo():
     if request.method == 'POST':
@@ -123,7 +123,7 @@ def data_cleaning_demo():
                 else:  # Excel files
                     df = pd.read_excel(filepath, engine='openpyxl')
                 
-                # --- FIXED CLEANING ORDER ---
+                # --- IMPROVED CLEANING ORDER ---
                 
                 # 1. Standardize columns: lowercase and underscores
                 df.columns = df.columns.str.lower().str.replace(" ", "_").str.replace("-", "_")
@@ -138,7 +138,7 @@ def data_cleaning_demo():
                 numeric_cols = df.select_dtypes(include=['number']).columns
                 df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
                 
-                # ----------------------------
+                # -------------------------------
 
                 # Save cleaned file with unique name
                 cleaned_filename = f"cleaned_{uuid.uuid4().hex}.{file_extension}"
@@ -203,6 +203,7 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template('500.html'), 500
 
+# FIXED: changed 'name' to '__name__'
 if __name__ == '__main__':
     # Run with debug=True for development only
     app.run(debug=True)
