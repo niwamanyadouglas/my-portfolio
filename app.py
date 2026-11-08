@@ -87,7 +87,7 @@ def sales_analysis_project():
 def research_project():
     return render_template('research-project.html')
 
-# 5. LIVE DEMO: Data Cleaning Tool (FIXED TO SHOW DASHBOARD STATS)
+# 5. LIVE DEMO: Data Cleaning Tool
 @app.route('/projects/data-cleaning/demo', methods=['GET', 'POST'])
 def data_cleaning_demo():
     if request.method == 'POST':
@@ -117,7 +117,6 @@ def data_cleaning_demo():
                 # --- CALCULATE "BEFORE" STATS ---
                 initial_duplicates = int(df.duplicated().sum())
                 initial_missing = int(df.isna().sum().sum())
-                # --------------------------------
                 
                 # --- CORRECT CLEANING ORDER ---
                 # 1. Standardize columns
@@ -137,18 +136,15 @@ def data_cleaning_demo():
                 duplicates_removed = initial_duplicates - final_duplicates
                 missing_values_filled = initial_missing - final_missing
                 
-                # Generate simple text report
-                report_lines = [
-                    "=== DATA CLEANING REPORT ===",
-                    f"1. Standardized column names to lowercase with underscores.",
-                    f"2. Removed {duplicates_removed} duplicate rows.",
-                    f"3. Dropped columns with >50% missing values.",
-                    f"4. Filled {missing_values_filled} missing numeric values with mean.",
+                report = (
+                    "=== DATA CLEANING REPORT ===\n"
+                    f"1. Standardized column names to lowercase with underscores.\n"
+                    f"2. Removed {duplicates_removed} duplicate rows.\n"
+                    f"3. Dropped columns with >50% missing values.\n"
+                    f"4. Filled {missing_values_filled} missing numeric values with mean.\n"
                     f"\nFinal dataset: {len(df)} rows, {len(df.columns)} columns"
-                ]
-                report = "\n".join(report_lines)
+                )
                 
-                # Calculate Quality Score
                 total_cells = df.size
                 quality_score = 100.0
                 if total_cells > 0:
@@ -162,7 +158,6 @@ def data_cleaning_demo():
                     'duplicate_rows': final_duplicates,
                     'missing_values': {'total': final_missing}
                 }
-                # -----------------------------------------------
 
                 # Save cleaned file
                 cleaned_filename = f"cleaned_{uuid.uuid4().hex}.{file_extension}"
@@ -175,7 +170,6 @@ def data_cleaning_demo():
                 
                 flash("Cleaning complete! Download your file below.", "success")
                 
-                # RETURN RENDER_TEMPLATE WITH ALL DASHBOARD VARIABLES
                 return render_template(
                     'data-cleaning-demo.html',
                     filename=cleaned_filename,
