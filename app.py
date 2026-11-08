@@ -7,21 +7,19 @@ from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 import pandas as pd
 
-# 1. Load Environment Variables from .env file
+# 1. Load Environment Variables
 if os.path.exists('.env'):
     load_dotenv(override=True)
 
-# Initialize Flask App (FIXED: changed 'name' to '__name__')
+# Initialize Flask App (FIXED: __name__)
 app = Flask(__name__)
 
 # 2. Configuration
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET', 'default-secret-key')
 app.config['UPLOAD_FOLDER'] = 'uploads'
-
-# Updated: Support CSV and Excel files
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'xls'}
 
-# Email Configuration (Port 2525 is used for Render compatibility)
+# Email Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 2525
 app.config['MAIL_USE_TLS'] = True
@@ -29,17 +27,14 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = os.getenv('EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.getenv('EMAIL_PASS')
 
-# Initialize Mail and Ensure Uploads Directory exists
 mail = Mail(app)
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-# 3. Context Processor for Dynamic Footer Year
 @app.context_processor
 def inject_now():
     return {'now': datetime.utcnow()}
 
-# 4. Helper Functions
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -65,14 +60,14 @@ def portfolio():
         },
         {
             "title": "Sales Data Analysis in Excel",
-            "description": "Comprehensive analysis of retail sales data using Pivot Tables and Power Query to drive business decisions.",
+            "description": "Comprehensive analysis of retail sales data using Pivot Tables and Power Query.",
             "image": "sales-analysis.jpg",
             "link": url_for('sales_analysis_project'),
             "demo_link": None
         },
         {
             "title": "Remote Work Trends Research",
-            "description": "A research project investigating the socio-economic impacts of the shift to remote work in 2024-2025.",
+            "description": "A research project investigating the socio-economic impacts of the shift to remote work.",
             "image": "research-project.jpg",
             "link": url_for('research_project'),
             "demo_link": None
@@ -80,7 +75,6 @@ def portfolio():
     ]
     return render_template('portfolio.html', projects=projects)
 
-# Project Detail Pages
 @app.route('/projects/data-cleaning')
 def data_cleaning_project():
     return render_template('data-cleaning.html')
@@ -93,7 +87,7 @@ def sales_analysis_project():
 def research_project():
     return render_template('research-project.html')
 
-# 5. LIVE DEMO: Data Cleaning Tool (IMPROVED LOGIC)
+# 5. LIVE DEMO: Data Cleaning Tool (FIXED TO SHOW DASHBOARD STATS)
 @app.route('/projects/data-cleaning/demo', methods=['GET', 'POST'])
 def data_cleaning_demo():
     if request.method == 'POST':
@@ -102,13 +96,11 @@ def data_cleaning_demo():
             return redirect(request.url)
         
         file = request.files['file']
-        
         if file.filename == '':
             flash("No file selected.", "danger")
             return redirect(request.url)
         
         if file and allowed_file(file.filename):
-            # Generate unique filename with UUID to prevent overwriting
             original_filename = secure_filename(file.filename)
             file_extension = original_filename.rsplit('.', 1)[1].lower()
             unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
@@ -117,30 +109,62 @@ def data_cleaning_demo():
             file.save(filepath)
             
             try:
-                # Read file based on extension
                 if file_extension == 'csv':
                     df = pd.read_csv(filepath)
-                else:  # Excel files
+                else:
                     df = pd.read_excel(filepath, engine='openpyxl')
                 
-                # --- IMPROVED CLEANING ORDER ---
+                # --- CALCULATE "BEFORE" STATS ---
+                initial_duplicates = int(df.duplicated().sum())
+                initial_missing = int(df.isna().sum().sum())
+                # --------------------------------
                 
-                # 1. Standardize columns: lowercase and underscores
+                # --- CORRECT CLEANING ORDER ---
+                # 1. Standardize columns
                 df.columns = df.columns.str.lower().str.replace(" ", "_").str.replace("-", "_")
-                
                 # 2. Remove duplicates
                 df = df.drop_duplicates()
-                
-                # 3. Drop columns that are mostly empty (more than 50% null) FIRST
+                # 3. Drop sparse columns FIRST (more than 50% null)
                 df = df.dropna(axis=1, thresh=len(df)*0.5)
-                
-                # 4. Fill missing numeric values with the mean AFTER dropping sparse columns
+                # 4. Fill missing numeric values AFTER dropping sparse columns
                 numeric_cols = df.select_dtypes(include=['number']).columns
                 df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
                 
-                # -------------------------------
+                # --- CALCULATE "AFTER" STATS FOR DASHBOARD ---
+                final_duplicates = int(df.duplicated().sum())
+                final_missing = int(df.isna().sum().sum())
+                
+                duplicates_removed = initial_duplicates - final_duplicates
+                missing_values_filled = initial_missing - final_missing
+                
+                # Generate simple text report
+                report_lines = [
+                    "=== DATA CLEANING REPORT ===",
+                    f"1. Standardized column names to lowercase with underscores.",
+                    f"2. Removed {duplicates_removed} duplicate rows.",
+                    f"3. Dropped columns with >50% missing values.",
+                    f"4. Filled {missing_values_filled} missing numeric values with mean.",
+                    f"\nFinal dataset: {len(df)} rows, {len(df.columns)} columns"
+                ]
+                report = "\n".join(report_lines)
+                
+                # Calculate Quality Score
+                total_cells = df.size
+                quality_score = 100.0
+                if total_cells > 0:
+                    missing_penalty = (final_missing / total_cells) * 40
+                    duplicate_penalty = (final_duplicates / len(df)) * 30 if len(df) > 0 else 0
+                    quality_score = round(max(0, min(100, 100 - missing_penalty - duplicate_penalty)), 2)
 
-                # Save cleaned file with unique name
+                stats = {
+                    'total_rows': len(df),
+                    'total_columns': len(df.columns),
+                    'duplicate_rows': final_duplicates,
+                    'missing_values': {'total': final_missing}
+                }
+                # -----------------------------------------------
+
+                # Save cleaned file
                 cleaned_filename = f"cleaned_{uuid.uuid4().hex}.{file_extension}"
                 cleaned_filepath = os.path.join(app.config['UPLOAD_FOLDER'], cleaned_filename)
                 
@@ -150,7 +174,19 @@ def data_cleaning_demo():
                     df.to_excel(cleaned_filepath, index=False, engine='openpyxl')
                 
                 flash("Cleaning complete! Download your file below.", "success")
-                return redirect(url_for('data_cleaning_demo', filename=cleaned_filename))
+                
+                # RETURN RENDER_TEMPLATE WITH ALL DASHBOARD VARIABLES
+                return render_template(
+                    'data-cleaning-demo.html',
+                    filename=cleaned_filename,
+                    original_name=original_filename,
+                    stats=stats,
+                    quality_score=quality_score,
+                    duplicates_removed=duplicates_removed,
+                    missing_values_filled=missing_values_filled,
+                    report=report,
+                    file_extension=file_extension
+                )
             
             except Exception as e:
                 flash(f"Error processing file: {str(e)}", "danger")
@@ -162,7 +198,6 @@ def data_cleaning_demo():
 def download_cleaned_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
 
-# 6. CONTACT FORM: Sending Emails
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
@@ -194,7 +229,6 @@ def contact():
 def resume():
     return render_template('resume.html')
 
-# 7. ERROR HANDLERS
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -203,7 +237,6 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template('500.html'), 500
 
-# FIXED: changed 'name' to '__name__'
+# FIXED: __name__ == '__main__'
 if __name__ == '__main__':
-    # Run with debug=True for development only
     app.run(debug=True)
